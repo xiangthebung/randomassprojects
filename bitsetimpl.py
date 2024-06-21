@@ -176,4 +176,26 @@ class Solution:
                 break
 
         return ret
+    
+
+    # Find all subsets of size k
+    def subsetsSizeK(self, nums: List[int], k: int) -> List[List[int]]:
+        b = Bitset(len(nums))
+        for i in range(k):
+            b[i] = 1
+        ret = []
+        while True:
+            cur = []
+            for i,bit in enumerate(b):
+                if bit:
+                    cur.append(nums[i])
+
+            ret.append(cur)
+            b.next_permutation()
+            if b == 0:
+                return ret
+            
+
+                
+
 
