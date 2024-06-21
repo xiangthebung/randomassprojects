@@ -1,8 +1,9 @@
 from typing import Optional
+
+
 class Bitset:
     # size is constant, cannot access past size
     # convention for this class is it prints the least significant bit first
-    # this is different from C++'s cout overload (it prints from most significant to least), but due to list splicing, it makes more sense the other way around
     def __init__(self, sz: Optional[int], startswith=0):
         if sz == None:
             sz = 0
@@ -59,6 +60,55 @@ class Bitset:
             ret += str(i)
         return ret
 
+    # Bitset methods
+    def popcount(self):
+        sm = 0
+        for i in self:
+            sm += i
+        return sm
+
+    def next_permutation(self):
+        i = 0
+        while i < len(self) - 1 and self[i] <= self[i + 1]:
+            i += 1
+        i += 1
+        if i == len(self):
+            self.bigits = 0
+            return
+        # When doing next permutation, i returns the first instance of a 0 after a 1
+        # For example, looking at least significant first, the starting list looks like this
+        # and i will take on this index
+        # 0 0 1 1 1 0 1 0 0
+        #           ^
+        #           i
+        # Now to get the next permutation, I want to remove a 1 from less than i like this
+        # 0 0 0 1 1 0 1 0 0
+        # Then I want to reverse the list before i
+        # 1 1 0 0 0 0 1 0 0
+        # Then I want to set i to 1
+        # 1 1 0 0 0 1 1 0 0
+        # This would be the next permutation
+        # Mathematically, what I can do is count the number of 1s before index i
+        # Subtract 1 from the number of 1s
+        # Then construct a Bitset with the 1s at the beginning
+        # This can be done by using [::-1], but a smarter way is using the number 2^(# of 1s + 1) -1
+
+        # Note: -1 below can be omitted, but is there to show clarity
+
+        num1 = Bitset(i - 1, self.bigits).popcount() - 1
+        # To change the digits before i, I need to use a bitmask
+        # I want my bitmask to look like this
+        # 0 0 0 0 0 1 1 1 1
+        #           ^
+        #           i
+        # Then & it with bigits and | it with the reversed list
+
+        self.bigits = (
+            ((1 << (num1 + 1)) - 1)
+            | ((1 << len(self)) - 1 - ((1 << i) - 1)) & self.bigits
+            | 1 << i
+        )
+
     # trivial operations
 
     def __iadd__(self, toadd):
@@ -72,10 +122,12 @@ class Bitset:
         return self
 
     def __invert__(self):
-        mask = (1 << len(self)) - 1 #prevents additional bits from being added
-        return Bitset(self.size, mask & ~self.bigits) #But we pass in the size, so previous line is not necessary
-    #however, it ensures the code correctness
-    
+        mask = (1 << len(self)) - 1  # prevents additional bits from being added
+        return Bitset(
+            self.size, mask & ~self.bigits
+        )  # But we pass in the size, so previous line is not necessary
+
+    # however, it ensures the code correctness
 
     def __eq__(self, other):
         return int(self) == int(other)
@@ -106,19 +158,22 @@ class Bitset:
 
 
 from typing import List
-#https://leetcode.com/problems/subsets/
+
+
 class Solution:
+    # https://leetcode.com/problems/subsets/
     def subsets(self, nums: List[int]) -> List[List[int]]:
         b = Bitset(len(nums))
         ret = []
         while True:
             cur = []
-            for i,bl in enumerate(b):
+            for i, bl in enumerate(b):
                 if bl:
                     cur.append(nums[i])
-            b+=1
+            b += 1
             ret.append(cur)
             if b == 0:
                 break
-            
+
         return ret
+
