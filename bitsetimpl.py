@@ -2,6 +2,7 @@ from typing import Optional
 class Bitset:
     # size is constant, cannot access past size
     # convention for this class is it prints the least significant bit first
+    # this is different from C++'s cout overload (it prints from most significant to least), but due to list splicing, it makes more sense the other way around
     def __init__(self, sz: Optional[int], startswith=0):
         if sz == None:
             sz = 0
