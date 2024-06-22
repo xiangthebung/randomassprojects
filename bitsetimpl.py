@@ -1,3 +1,4 @@
+
 from typing import Optional
 
 
@@ -176,26 +177,31 @@ class Solution:
                 break
 
         return ret
-    
 
-    # Find all subsets of size k
-    def subsetsSizeK(self, nums: List[int], k: int) -> List[List[int]]:
-        b = Bitset(len(nums))
+    # https://leetcode.com/problems/combination-sum-iii/
+    # Description:
+    # Use k distinct numbers from 1 to 9 to sum to n
+    # Solution:
+    # Use Bitset::next_permutation to go through every possible subset of the list [1,2,...,9] of size k
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        if k > n:
+            return []
+
+        b = Bitset(9)
         for i in range(k):
             b[i] = 1
+
         ret = []
         while True:
             cur = []
-            for i,bit in enumerate(b):
-                if bit:
-                    cur.append(nums[i])
+            for i, t in enumerate(b):
+                if t:
+                    cur += [i+1]  # We are adding the ith element of a list of [1,2,...,9], which is i+1
 
-            ret.append(cur)
+            if sum(cur) == n:
+                ret.append(cur)
+
             b.next_permutation()
             if b == 0:
-                return ret
-            
-
-                
-
-
+                break
+        return ret
