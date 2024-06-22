@@ -5,6 +5,7 @@ from typing import Optional
 class Bitset:
     # size is constant, cannot access past size
     # convention for this class is it prints the least significant bit first
+    # This convention is different from C++'s implementation. However, it makes more sense to support list slicing. 
     def __init__(self, sz: Optional[int], startswith=0):
         if sz == None:
             sz = 0
