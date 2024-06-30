@@ -206,3 +206,16 @@ class Solution:
             if b == 0:
                 break
         return ret
+
+    # Direct use of next_permutation
+    # https://leetcode.com/problems/combinations/description/
+    def combine(self, n: int, k: int) -> List[List[int]]:
+            b = Bitset(n)
+            b[:k] = [1 for i in range(k)]
+            ret = []
+            while True:
+                ret.append([i+1 for i in range(n) if b[i]])
+                b.next_permutation()
+                if b == 0:
+                    return ret
+        
